@@ -469,7 +469,11 @@ static gboolean bee_irc_user_privmsg(irc_user_t *iu, const char *msg)
 		iu->pastebuf = g_string_new(msg);
 	} else {
 		b_event_remove(iu->pastebuf_timer);
-		g_string_append_printf(iu->pastebuf, "\n%s", msg);
+		if(!strncmp(msg, "/me ", 4)){
+			g_string_append_printf(iu->pastebuf, memmove(msg, msg+3, strlen(msg)));
+		} else {
+			g_string_append_printf(iu->pastebuf, "\n%s", msg);
+		}
 	}
 
 	if (set_getbool(&iu->irc->b->set, "paste_buffer")) {
